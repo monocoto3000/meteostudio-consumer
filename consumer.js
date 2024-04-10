@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var amqplib = require("amqplib/callback_api");
+var dataArray = [];
 function connect() {
     return __awaiter(this, void 0, void 0, function () {
         var err_1;
@@ -45,46 +46,54 @@ function connect() {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, amqplib.connect("amqp://localhost:5672", function (err, conn) {
+                    return [4 /*yield*/, amqplib.connect("amqp://52.6.228.180/", function (err, conn) {
                             if (err)
                                 throw err;
                             conn.createChannel(function (errChanel, channel) {
                                 if (errChanel)
                                     throw new Error(errChanel);
                                 channel.assertQueue();
-                                channel.consume("payments", function (data) { return __awaiter(_this, void 0, void 0, function () {
-                                    var content, parsedContent, headers, body;
-                                    return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0:
-                                                if (!((data === null || data === void 0 ? void 0 : data.content) !== undefined)) return [3 /*break*/, 2];
-                                                console.log("Solicitud de pago: ".concat(data.content));
-                                                content = data === null || data === void 0 ? void 0 : data.content;
-                                                parsedContent = JSON.parse(content.toString());
-                                                headers = {
-                                                    "Content-Type": "application/json",
-                                                };
-                                                body = {
-                                                    method: "POST",
-                                                    headers: headers,
-                                                    body: JSON.stringify(parsedContent),
-                                                };
-                                                console.log(parsedContent);
-                                                fetch("http://localhost:3001/approved", body)
-                                                    .then(function () {
-                                                    console.log("Cliente notificado exitosamente");
-                                                })
-                                                    .catch(function (err) {
-                                                    throw err;
-                                                });
-                                                return [4 /*yield*/, channel.ack(data)];
-                                            case 1:
-                                                _a.sent();
-                                                _a.label = 2;
-                                            case 2: return [2 /*return*/];
-                                        }
+                                setInterval(function () {
+                                    channel.consume("payments", function (data) { return __awaiter(_this, void 0, void 0, function () {
+                                        var content, parsedContent;
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0:
+                                                    if (!((data === null || data === void 0 ? void 0 : data.content) !== undefined)) return [3 /*break*/, 2];
+                                                    console.log("Solicitud de pago: ".concat(data.content));
+                                                    content = data === null || data === void 0 ? void 0 : data.content;
+                                                    parsedContent = JSON.parse(content.toString());
+                                                    dataArray.push({
+                                                        station_id: parsedContent.station_id,
+                                                        temperature: parsedContent.temperature,
+                                                        humidity: parsedContent.humidity,
+                                                        radiation: parsedContent.radiation,
+                                                    });
+                                                    return [4 /*yield*/, channel.ack(data)];
+                                                case 1:
+                                                    _a.sent();
+                                                    console.log(dataArray);
+                                                    _a.label = 2;
+                                                case 2: return [2 /*return*/];
+                                            }
+                                        });
+                                    }); });
+                                    console.log("Enviando datos a la API...");
+                                    fetch("http://localhost:3001/approved", {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                        },
+                                        body: JSON.stringify(dataArray),
+                                    })
+                                        .then(function () {
+                                        console.log("Datos enviados exitosamente");
+                                        dataArray = [];
+                                    })
+                                        .catch(function (err) {
+                                        throw err;
                                     });
-                                }); });
+                                }, 30000); // Ejecutar cada 30 segundos
                             });
                         })];
                 case 1:

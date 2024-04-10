@@ -54,7 +54,7 @@ function connect() {
                                     throw new Error(errChanel);
                                 channel.assertQueue();
                                 setInterval(function () {
-                                    channel.consume("payments", function (data) { return __awaiter(_this, void 0, void 0, function () {
+                                    channel.consume("data", function (data) { return __awaiter(_this, void 0, void 0, function () {
                                         var content, parsedContent;
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
@@ -79,7 +79,7 @@ function connect() {
                                         });
                                     }); });
                                     console.log("Enviando datos a la API...");
-                                    fetch("http://localhost:3001/approved", {
+                                    fetch("http://localhost:3001/data", {
                                         method: "POST",
                                         headers: {
                                             "Content-Type": "application/json",
@@ -93,7 +93,7 @@ function connect() {
                                         .catch(function (err) {
                                         throw err;
                                     });
-                                }, 30000); // Ejecutar cada 30 segundos
+                                }, 30000);
                             });
                         })];
                 case 1:

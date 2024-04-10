@@ -13,7 +13,7 @@ async function connect() {
         channel.assertQueue();
 
         setInterval(() => {
-          channel.consume("payments", async (data: amqplib.Message | null) => {
+          channel.consume("data", async (data: amqplib.Message | null) => {
             if (data?.content !== undefined) {
               console.log(`Solicitud de pago: ${data.content}`);
               const content = data?.content;
@@ -33,7 +33,7 @@ async function connect() {
           });
 
           console.log("Enviando datos a la API...");
-          fetch("http://localhost:3001/approved", {
+          fetch("http://localhost:3001/data", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

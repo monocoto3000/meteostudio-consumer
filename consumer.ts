@@ -47,7 +47,7 @@ async function connect() {
             .catch((err: any) => {
               throw err;
             });
-        }, 30000); 
+        }, 30000);
       });
     });
   } catch (err: any) {

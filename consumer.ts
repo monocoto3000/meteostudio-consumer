@@ -3,8 +3,12 @@ import * as amqplib from 'amqplib/callback_api';
 let dataArray: { station_id: number; temperature: number; humidity: number; radiation: number }[] = [];
 
 async function connect() {
+  const USERNAME = "meteostudio"
+  const PASSWORD = encodeURIComponent("CMdui89!gdDDD145x?")
+  const HOSTNAME = "100.25.187.231"
+  const PORT = 5672
   try {
-    await amqplib.connect("amqp://52.6.228.180/", (err: any, conn: amqplib.Connection) => {
+    amqplib.connect(`amqp://${USERNAME}:${PASSWORD}@${HOSTNAME}:${PORT}`, (err: any, conn: amqplib.Connection) => {
       if (err) throw err;
 
       conn.createChannel((errChanel: any, channel: amqplib.Channel) => {
@@ -12,8 +16,7 @@ async function connect() {
 
         channel.assertQueue();
 
-        setInterval(() => {
-          channel.consume("data", async (data: amqplib.Message | null) => {
+          channel.consume("Meteorological", async (data: amqplib.Message | null) => {
             if (data?.content !== undefined) {
               console.log(`Solicitud de pago: ${data.content}`);
               const content = data?.content;
@@ -26,11 +29,13 @@ async function connect() {
                 radiation: parsedContent.radiation,
               });
 
-              await channel.ack(data);
+              channel.ack(data);
 
               console.log(dataArray)
             }
           });
+
+          setInterval(() => {
 
           console.log("Enviando datos a la API...");
           fetch("http://localhost:3001/data", {

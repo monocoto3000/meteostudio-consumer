@@ -18,7 +18,7 @@ async function connect() {
 
           channel.consume("Meteorological", async (data: amqplib.Message | null) => {
             if (data?.content !== undefined) {
-              console.log(`Solicitud de pago: ${data.content}`);
+              console.log(`Datos de la estacion: ${data.content}`);
               const content = data?.content;
               const parsedContent = JSON.parse(content.toString());
 
@@ -38,7 +38,7 @@ async function connect() {
           setInterval(() => {
 
           console.log("Enviando datos a la API...");
-          fetch("http://localhost:3001/data", {
+          fetch("http://3.221.32.128/data", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

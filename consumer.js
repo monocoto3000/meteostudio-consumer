@@ -59,7 +59,7 @@ function connect() {
                             var content, parsedContent;
                             return __generator(this, function (_a) {
                                 if ((data === null || data === void 0 ? void 0 : data.content) !== undefined) {
-                                    console.log("Solicitud de pago: ".concat(data.content));
+                                    console.log("Datos de la estacion: ".concat(data.content));
                                     content = data === null || data === void 0 ? void 0 : data.content;
                                     parsedContent = JSON.parse(content.toString());
                                     dataArray.push({
@@ -76,7 +76,7 @@ function connect() {
                         }); });
                         setInterval(function () {
                             console.log("Enviando datos a la API...");
-                            fetch("http://localhost:3001/data", {
+                            fetch("http://3.221.32.128/data", {
                                 method: "POST",
                                 headers: {
                                     "Content-Type": "application/json",
